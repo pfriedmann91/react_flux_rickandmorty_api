@@ -1,45 +1,59 @@
-const getState = ({ getStore, getActions, setStore }) => {
-	return {
-		store: {
-			demo: [
-				{
-					title: "FIRST",
-					background: "white",
-					initial: "white"
-				},
-				{
-					title: "SECOND",
-					background: "white",
-					initial: "white"
-				}
-			]
-		},
-		actions: {
-			// Use getActions to call a function within a fuction
-			exampleFunction: () => {
-				getActions().changeColor(0, "green");
-			},
-			loadSomeData: () => {
-				/**
-					fetch().then().then(data => setStore({ "foo": data.bar }))
-				*/
-			},
-			changeColor: (index, color) => {
-				//get the store
-				const store = getStore();
+const getState = ({ getStore, setStore }) => {
+    return {
+        store: {
+            characters: [],
+            locations: [],
+            episodes: [],
+            favorites: [],
+        },
+        actions: {
+            
+            getCharacters: async () => {
+                try {
+                    const response = await fetch("https://rickandmortyapi.com/api/character");
+                    const data = await response.json();
+                    setStore({ characters: data.results });
+                } catch (error) {
+                    console.log("error:", error);
+                }
+            },
 
-				//we have to loop the entire demo array to look for the respective index
-				//and change its color
-				const demo = store.demo.map((elm, i) => {
-					if (i === index) elm.background = color;
-					return elm;
-				});
+            getLocations: async () => {
+                try {
+                    const response = await fetch("https://rickandmortyapi.com/api/location");
+                    const data = await response.json();
+                    setStore({ locations: data.results });
+                } catch (error) {
+                    console.log("error:", error);
+                }
+            },
 
-				//reset the global store
-				setStore({ demo: demo });
-			}
-		}
-	};
+            getEpisodes: async () => {
+                try {
+                    const response = await fetch("https://rickandmortyapi.com/api/episode");
+                    const data = await response.json();
+                    setStore({ episodes: data.results });
+                } catch (error) {
+                    console.log("error:", error);
+                }
+            },
+
+            addFavorite: (item) => {
+                const store = getStore();
+                const isFavorite = store.favorites.includes(item);
+
+                if (isFavorite) {
+                    setStore({
+                        favorites: store.favorites.filter((fav) => fav !== item),
+                    });
+                } else {
+                    setStore({
+                        favorites: [...store.favorites, item],
+                    });
+                }
+            },
+        },
+    };
 };
 
 export default getState;
