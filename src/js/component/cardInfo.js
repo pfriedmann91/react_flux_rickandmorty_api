@@ -6,7 +6,7 @@ export const CardInfo = ({ item, type }) => {
     const { store, actions } = useContext(Context);
     const navigate = useNavigate();
 
-    const isFavorite = store.favorites.includes(item.name);
+    const isFavorite = actions.isFavorite(item.id, type);
 
     return (
         <div className="card m-3" style={{ width: "18rem" }}>
@@ -16,15 +16,17 @@ export const CardInfo = ({ item, type }) => {
                 {type === "character" && <p>Species: {item.species}</p>}
                 {type === "location" && <p>Type: {item.type}</p>}
                 {type === "episode" && <p>Episode: {item.episode}</p>}
+                
                 <button
                     className="btn btn-primary"
                     onClick={() => navigate(`/${type}/${item.id}`)}
                 >
                     Learn More!
                 </button>
+
                 <button
-                    className={`btn ${isFavorite ? "btn-warning" : "btn-outline-warning"}`} 
-                    onClick={() => actions.addFavorite(item.name)} 
+                    className={`btn ${isFavorite ? "btn-warning" : "btn-outline-warning"}`}
+                    onClick={() => actions.addFavorite(item, type)}
                 >
                     <i className="fa-solid fa-heart"></i>
                 </button>

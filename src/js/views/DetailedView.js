@@ -1,29 +1,21 @@
-import React, { useState, useEffect } from "react";
-import { useParams } from "react-router-dom";
+import React, { useEffect, useContext } from "react";
+import { useParams, Link } from "react-router-dom";
+import { Context } from "../store/appContext";
 
 export const DetailedView = () => {
     const { type, id } = useParams();
-    const [data, setData] = useState(null);
+    const { store, actions } = useContext(Context);
 
     useEffect(() => {
-        
-     const fetchData = async () => {
-            try {
-                const response = await fetch(`https://rickandmortyapi.com/api/${type}/${id}`);
-                const result = await response.json();
-                setData(result);
-            } catch (error) {
-                console.error(`Error fetching ${type} data:`, error);
-            }
-        };
-        fetchData();
+        actions.getData(type, id);
     }, [type, id]);
 
-    if (!data) return <p>Loading {type} details...</p>;
+    const data = store.detailedData;
 
     return (
         <div className="container mt-5">
-            {type === "character" && (
+
+            {data && type === "character" && (
                 <div>
                     <h1>{data.name}</h1>
                     <img src={data.image} alt={data.name} className="img-fluid" />
@@ -33,7 +25,8 @@ export const DetailedView = () => {
                     <p>Origin: {data.origin.name}</p>
                 </div>
             )}
-            {type === "location" && (
+
+            {data && type === "location" && (
                 <div>
                     <h1>{data.name}</h1>
                     <p>Type: {data.type}</p>
@@ -41,7 +34,8 @@ export const DetailedView = () => {
                     <p>Residents: {data.residents.length}</p>
                 </div>
             )}
-            {type === "episode" && (
+
+            {data && type === "episode" && (
                 <div>
                     <h1>{data.name}</h1>
                     <p>Episode: {data.episode}</p>
